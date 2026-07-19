@@ -133,22 +133,51 @@ The marker appears once in the echoed prompt from the start — require it
 **twice** before treating the agent as finished, or a fresh pane reads as
 done.
 
+**Listen for trouble, not just the marker.** A failed agent never prints
+it — an API error, rate limit, expired login, or permission prompt sits
+there forever looking exactly like "still working". Two extra signals:
+
+- **Error chrome** — the tools print recognizable strings when the run
+  itself breaks: `API Error`, `Retrying in`, `rate limit`, `usage limit`,
+  `stream error`, `login expire`. Treat a match as *look now*, not
+  *failed*: dump the screen and decide — auto-retry in progress → keep
+  waiting; hard failure or auth prompt → show the user. False trips are
+  cheap (an agent merely discussing rate limits costs one glance).
+- **Heartbeat** — every ~5 minutes dump the screen and compare with the
+  previous dump. Changed = alive; identical with no marker = stalled
+  (waiting on input, or the tool died) — catches failures no string list
+  anticipates.
+
+  ```sh
+  zellij action dump-screen --full --pane-id "$API" --path /tmp/api.txt
+  cmp -s /tmp/api.txt /tmp/api.prev && echo "STALLED"
+  mv -f /tmp/api.txt /tmp/api.prev
+  ```
+
+On trouble or stall: capture the screen, tell the user. Never auto-retry,
+never close the pane before capturing, never keep waiting silently.
+
 **Never read the raw `zellij subscribe` stream** — every `pane_update` event
 re-sends the full rendered viewport, and a busy TUI redraws constantly
 (measured: ~94 KB per 5 s for one active pane; an idle pane costs ~nothing).
-Pipe it through a filter that stays silent until the condition, so hours of
-waiting cost one output line:
+Pipe it through a filter that stays silent until a condition — done, closed,
+or trouble — so hours of waiting cost one output line:
 
 ```sh
 zellij subscribe --pane-id "$API" --format json \
   | awk '/"event":"pane_closed"/{print "closed"; exit}
-         {n=gsub(/AGENT_DONE:run:api/,"&")} n>=2{print "done"; exit}'
+         {n=gsub(/AGENT_DONE:run:api/,"&")} n>=2{print "done"; exit}
+         tolower($0) ~ /api error|retrying in|rate limit|usage limit|stream error|login expire/{print "trouble"; exit}'
 ```
 
+The done check runs *before* the trouble check on purpose: a finished agent
+with a stale `Retrying in…` line still on screen reads done. A stall emits
+no event and matches no pattern — subscribe can't see it, so keep the
+heartbeat running alongside.
+
 Same token cost, lower tech: poll `dump-screen --full … | grep -c` every
-minute or two — one viewport per check. A pane needing input (auth,
-permission prompt) just sits there — `dump-screen` it and tell the user
-rather than waiting forever.
+minute or two — one viewport per check, and the heartbeat comes free (you
+already have the previous dump to `cmp` against).
 
 The marker is the signal to **act**, not proof the agent stopped: an agent
 in auto mode may queue itself follow-up work past its marker (observed

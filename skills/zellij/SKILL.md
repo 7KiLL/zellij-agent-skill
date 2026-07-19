@@ -137,6 +137,10 @@ tabs, sessions, or worktrees. End your final message with AGENT_DONE:run:api")
   answer); once means it just started. `zellij subscribe` waits on events
   instead of polling — but always filtered through `awk`/`grep`; the raw
   stream re-sends the whole viewport on every redraw.
+- **Failure never prints the marker.** Also watch for error chrome
+  (`API Error`, `rate limit`, `login expire`…) and heartbeat the pane
+  (~5 min dump-and-compare; unchanged screen = stalled) — on either, dump
+  the screen and show the user; don't wait forever.
 - **Launch tools bare.** Models, effort, permissions are each tool's own
   business — the user's config decides; never pick a model for an agent.
 - **Teardown**: capture screens first, then panes → worktrees →
