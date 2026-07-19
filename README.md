@@ -50,6 +50,21 @@ gets closed later. Models are never the skill's business — each agent CLI
 launches with its own configured default. Recipes:
 [skills/zellij/references/agent-runs.md](skills/zellij/references/agent-runs.md).
 
+## Install — one line
+
+Via the [skills CLI](https://skills.sh) (`-g` = user-level; omit for
+project-level):
+
+```sh
+npx -y skills add 7KiLL/zellij-agent-skill --skill zellij --agent claude-code -g
+```
+
+Same for Codex — or any agent the CLI supports (`--agent '*'` for all):
+
+```sh
+npx -y skills add 7KiLL/zellij-agent-skill --skill zellij --agent codex -g
+```
+
 ## Install — Claude Code (plugin marketplace)
 
 ```
@@ -57,7 +72,7 @@ launches with its own configured default. Recipes:
 /plugin install zellij@l7kill-plugins
 ```
 
-Or drop just the skill in without the plugin machinery:
+Or drop just the skill in without any machinery:
 
 ```sh
 cp -r skills/zellij ~/.claude/skills/zellij
