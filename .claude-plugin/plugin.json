@@ -1,0 +1,15 @@
+{
+  "name": "zellij",
+  "displayName": "Zellij CLI",
+  "version": "0.1.0",
+  "description": "Drive the zellij terminal multiplexer from the CLI: park long-lived jobs in visible panes, read them back, manage tabs/worktrees. Self-gating — no-ops when not inside zellij.",
+  "author": {
+    "name": "Andrii S",
+    "email": "7killua@gmail.com",
+    "url": "https://github.com/7KiLL"
+  },
+  "homepage": "https://github.com/7KiLL/zellij-agent-skill",
+  "repository": "https://github.com/7KiLL/zellij-agent-skill",
+  "license": "MIT",
+  "keywords": ["zellij", "terminal", "multiplexer", "panes", "tabs", "tmux", "workflow"]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "l7kill-plugins",
+  "owner": {
+    "name": "Andrii S",
+    "email": "7killua@gmail.com"
+  },
+  "description": "Zellij Claude Code plugin to work with CLI",
+  "plugins": [
+    {
+      "name": "zellij",
+      "source": "./",
+      "description": "Drive zellij from the CLI — park jobs in panes, read them back, manage tabs/worktrees. Self-gating.",
+      "license": "MIT",
+      "keywords": [
+        "zellij",
+        "terminal",
+        "multiplexer",
+        "workflow"
+      ]
+    }
+  ]
+}
