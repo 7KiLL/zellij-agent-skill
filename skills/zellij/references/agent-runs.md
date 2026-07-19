@@ -8,6 +8,7 @@ syntax: [cli.md](cli.md). Organization rules: [sessions.md](sessions.md).
 
 - [The pattern](#the-pattern)
 - [Placement is a real question](#placement-is-a-real-question)
+- [Grids and exact layouts](#grids-and-exact-layouts)
 - [Prompting a pane agent](#prompting-a-pane-agent)
 - [Monitoring](#monitoring)
 - [Teardown](#teardown)
@@ -58,6 +59,41 @@ redirects every later spawn (verified: panes follow whatever tab is active
 at spawn time). So: create the tab and spawn **all** panes in one script, or
 re-assert `go-to-tab-name "$RUN"` immediately before each `new-pane` — then
 confirm with `list-panes -t` before relying on the layout.
+
+A bare `new-tab` also always contains **one default shell pane** (a tab
+cannot be empty) — close it after spawning your agent panes, or avoid it
+entirely with a layout file below.
+
+## Grids and exact layouts
+
+`new-tab --layout FILE` creates a tab with *exactly* the panes you declare —
+no stray shell pane, precise geometry. A 2×2 agent grid (verified: four
+equal quadrants, bars kept):
+
+```kdl
+// grid.kdl — zellij action new-tab --name "$RUN" --layout grid.kdl
+layout {
+    pane size=1 borderless=true { plugin location="zellij:tab-bar"; }
+    pane split_direction="vertical" {
+        pane split_direction="horizontal" {
+            pane name="claude:api"  command="claude" start_suspended=true cwd="/abs/wt/api"  { args "task…"; }
+            pane name="claude:ui"   command="claude" start_suspended=true cwd="/abs/wt/ui"   { args "task…"; }
+        }
+        pane split_direction="horizontal" {
+            pane name="codex:tests" command="codex" start_suspended=true cwd="/abs/wt/tests" { args "task…"; }
+            pane name="codex:docs"  command="codex" start_suspended=true cwd="/abs/wt/docs"  { args "task…"; }
+        }
+    }
+    pane size=1 borderless=true { plugin location="zellij:status-bar"; }
+}
+```
+
+`split_direction="vertical"` = side-by-side columns, `"horizontal"` =
+stacked rows; nest them for any grid. Keep the two bar panes or the tab
+loses its tab/status bars. A layout prints no pane ids — recover them by
+the `name=` values via `list-panes -t -j`. Prompts containing quotes are
+painful to escape in KDL; for those, fall back to sequential `new-pane`
+(normal shell quoting) and close the default pane.
 
 ## Prompting a pane agent
 

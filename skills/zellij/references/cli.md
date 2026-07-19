@@ -46,7 +46,7 @@ percent (e.g. `10%`); `--pinned true` keeps it always on top.
 
 ## Tabs
 
-- `new-tab [--name N] [--cwd DIR] [--layout PATH] [-- CMD]` — new tab
+- `new-tab [--name N] [--cwd DIR] [--layout PATH] [-- CMD]` — new tab; prints its position. Without `--layout` the tab always starts with one default shell pane — close it after spawning your panes, or define exact panes (grids included) via a layout: [agent-runs.md](agent-runs.md#grids-and-exact-layouts)
 - `close-tab` — close the *focused* tab (close by name: `go-to-tab-name X && close-tab`); `close-tab-by-id <id>`
 - `go-to-tab <index>` / `go-to-tab-name <name> [--create]` / `go-to-tab-by-id <id>` / `go-to-next-tab` / `go-to-previous-tab`
 - `rename-tab <name> [--tab-id ID]` / `undo-rename-tab` — set/clear tab title

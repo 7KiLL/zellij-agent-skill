@@ -65,6 +65,9 @@ Rules of thumb:
   [SKILL.md](../SKILL.md#worktrees)).
 - Floating panes hide with one `toggle-floating-panes` — right for things the
   user peeks at, wrong for things they must not miss.
+- Need an exact shape (2×2 grid, N equal panes)? Declare it in a layout file
+  and pass `new-tab --layout` —
+  [agent-runs.md](agent-runs.md#grids-and-exact-layouts).
 
 ## Moving things when the shape changes
 
