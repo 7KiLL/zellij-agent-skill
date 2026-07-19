@@ -35,6 +35,21 @@ tabs, sessions, or worktrees. End your final message with AGENT_DONE:$RUN:tests"
 starts each agent deliberately. Drop `-s` to start immediately. Capture the
 printed pane ids; they are your only handle for monitoring and teardown.
 
+For a **single** ad-hoc agent, Claude's own worktree flag is simpler — skip
+the manual `git worktree add` entirely:
+
+```sh
+zellij run --name scratch -- claude -w fix-auth "One bounded task."
+```
+
+Claude creates `.claude/worktrees/fix-auth` (branch `worktree-fix-auth`)
+and offers keep/remove at exit. Don't use `-w` for orchestrated fan-out,
+though: it branches from the repo's *default branch* (origin/HEAD), not
+your current HEAD, so agents silently miss in-progress local work; the
+tool picks the path and branch names; its exit prompt races marker-based
+teardown; and Codex has no equivalent, so the fan-out recipe stays uniform
+with `git worktree add`.
+
 Launch each tool bare: `claude "task"` / `codex "task"`. Models, effort,
 permission modes, and sandbox flags are each tool's own business — the user
 configures their tools; never pick a model or bolt one tool's flags onto the
